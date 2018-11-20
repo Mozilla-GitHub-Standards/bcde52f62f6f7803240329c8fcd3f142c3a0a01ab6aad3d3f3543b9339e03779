@@ -66,6 +66,10 @@ class RootView: UIViewController, RootViewProtocol {
         return self.currentViewController?.presentedViewController is UINavigationController
     }
 
+    var mainStackExists: Bool {
+        return self.currentViewController != nil
+    }
+
     func startMainStack<T: UINavigationController>(_ type: T.Type) {
         self.currentViewController = type.init()
     }

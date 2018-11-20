@@ -15,6 +15,7 @@ protocol RootViewProtocol: class {
     func modalStackIs<T: UINavigationController>(_ type: T.Type) -> Bool
 
     var modalStackPresented: Bool { get }
+    var mainStackExists: Bool { get }
 
     func startMainStack<T: UINavigationController>(_ type: T.Type)
     func startModalStack<T: UINavigationController>(_ navigationController: T)
@@ -104,7 +105,10 @@ class RootPresenter {
                 case .Unprepared, .Locked:
                     self.dispatcher.dispatch(action: LoginRouteAction.welcome)
                 case .Unlocked:
-                    self.dispatcher.dispatch(action: MainRouteAction.list)
+                    if !view.mainStackExists {
+                        self.dispatcher.dispatch(action: MainRouteAction.list)
+                    }
+//                    self.dispatcher.dispatch(action: MainRouteAction.list)
                     self.dispatcher.dispatch(action: CredentialProviderAction.refresh)
                 default:
                     break

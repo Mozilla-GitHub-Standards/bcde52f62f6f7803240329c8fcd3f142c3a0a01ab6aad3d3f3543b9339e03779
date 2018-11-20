@@ -38,6 +38,8 @@ class RootPresenterSpec: QuickSpec {
 
         var modalStackPresented = true
 
+        var mainStackExists: Bool = true
+
         func topViewIs<T: UIViewController>(_ type: T.Type) -> Bool {
             self.topViewIsArgument = type
             return self.topViewIsVar
