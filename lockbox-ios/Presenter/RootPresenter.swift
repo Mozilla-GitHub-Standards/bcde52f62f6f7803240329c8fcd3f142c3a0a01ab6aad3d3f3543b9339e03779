@@ -105,7 +105,7 @@ class RootPresenter {
                 case .Unprepared, .Locked:
                     self.dispatcher.dispatch(action: LoginRouteAction.welcome)
                 case .Unlocked:
-                    if !view.mainStackExists {
+                    if !view.mainStackExists || view.mainStackIs(LoginNavigationController.self) {
                         self.dispatcher.dispatch(action: MainRouteAction.list)
                     }
 //                    self.dispatcher.dispatch(action: MainRouteAction.list)
