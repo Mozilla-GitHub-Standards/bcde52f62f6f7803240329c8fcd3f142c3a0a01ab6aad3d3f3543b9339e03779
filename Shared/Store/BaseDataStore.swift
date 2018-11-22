@@ -156,8 +156,10 @@ class BaseDataStore {
                 .subscribe(onNext: { action in
                     switch action {
                     case .background:
+                        self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "BaseDataStore backgrounding app"))
                         self.profile.syncManager?.applicationDidEnterBackground()
                     case .foreground:
+                        self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "BaseDataStore forgrounding app"))
                         self.profile.syncManager?.applicationDidBecomeActive()
                         self.handleLock()
                     case .upgrade(let previous, _):
@@ -165,6 +167,7 @@ class BaseDataStore {
                             self.handleLock()
                         }
                     case .shutdown:
+                        self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "BaseDataStore shutdown"))
                         self.shutdown()
                     default:
                         break
@@ -435,8 +438,10 @@ extension BaseDataStore {
             .take(1)
             .subscribe(onNext: { autoLockSetting, forceLock in
                 if forceLock {
+                    self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "handleLock.forceLock - locking"))
                     self.lock()
                 } else if autoLockSetting == .Never {
+                    self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "handleLock.never - unlocking"))
                     self.unlock()
                 } else {
                     let date = NSDate(
@@ -444,8 +449,10 @@ extension BaseDataStore {
                             forKey: UserDefaultKey.autoLockTimerDate.rawValue))
 
                     if date.timeIntervalSince1970 > 0 && date.timeIntervalSinceNow > 0 {
+                        self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "handleLock - unlocking because of \(date)"))
                         self.unlock()
                     } else {
+                        self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "handleLock - locking"))
                         self.lock()
                     }
                 }

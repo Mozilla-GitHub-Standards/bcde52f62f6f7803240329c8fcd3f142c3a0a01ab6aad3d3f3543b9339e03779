@@ -118,7 +118,7 @@ extension SettingListView {
     private func setupDelegate() {
         if let presenter = self.presenter {
             self.tableView.rx.itemSelected
-                    .map { path -> RouteAction? in
+                    .map { path -> Action? in
                         return self.dataSource?[path].routeAction
                     }
                     .bind(to: presenter.onSettingCellTapped)
@@ -185,14 +185,14 @@ extension SettingListView {
 
 class SettingCellConfiguration {
     var text: String
-    var routeAction: RouteAction?
+    var routeAction: Action?
     var enabled: Bool = true
     var detailText: String?
     var subtitle: NSAttributedString?
     var accessibilityActions: [UIAccessibilityCustomAction]?
     var accessibilityId: String
 
-    init(text: String, routeAction: RouteAction?, accessibilityId: String) {
+    init(text: String, routeAction: Action?, accessibilityId: String) {
         self.text = text
         self.routeAction = routeAction
         self.accessibilityId = accessibilityId

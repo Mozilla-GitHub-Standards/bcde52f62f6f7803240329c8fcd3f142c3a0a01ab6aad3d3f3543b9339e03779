@@ -33,6 +33,16 @@ class Sentry {
         }
     }
 
+    func addBreadcrumb(category: String, message: String? = nil) {
+        let breadcrumb = Breadcrumb(level: .warning, category: category)
+        breadcrumb.message = message
+        Client.shared?.breadcrumbs.add(breadcrumb)
+    }
+
+    func crash() {
+        Client.shared?.crash()
+    }
+
     private func isSimulator() -> Bool {
         return ProcessInfo.processInfo.environment["SIMULATOR_ROOT"] != nil
     }

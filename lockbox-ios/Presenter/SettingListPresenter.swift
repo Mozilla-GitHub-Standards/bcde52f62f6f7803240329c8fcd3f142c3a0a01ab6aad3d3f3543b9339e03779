@@ -21,7 +21,7 @@ class SettingListPresenter {
     private let biometryManager: BiometryManager
     private let disposeBag = DisposeBag()
 
-    lazy private(set) var onSettingCellTapped: AnyObserver<RouteAction?> = {
+    lazy private(set) var onSettingCellTapped: AnyObserver<Action?> = {
         return Binder(self) { target, action in
             guard let routeAction = action else {
                 return
@@ -78,7 +78,12 @@ class SettingListPresenter {
                             urlString: Constant.app.faqURL,
                             title: Constant.string.faq,
                             returnRoute: SettingRouteAction.list),
-                            accessibilityId: "faqSettingOption")
+                            accessibilityId: "faqSettingOption"),
+            SettingCellConfiguration(
+                text: "Submit Log",
+                routeAction: LoggingRouteAction.submitLog,
+                accessibilityId: "submitLog"
+            )
         ])
     }
 

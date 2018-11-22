@@ -53,3 +53,8 @@ extension LifecycleAction: TelemetryAction {
         return nil
     }
 }
+
+enum LoggingRouteAction: Action {
+    case submitLog
+    case addBreadcrumb(message: String)
+}

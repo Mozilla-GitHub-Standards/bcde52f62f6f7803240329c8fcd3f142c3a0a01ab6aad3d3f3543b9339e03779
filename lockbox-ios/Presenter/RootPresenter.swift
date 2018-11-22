@@ -101,14 +101,17 @@ class RootPresenter {
 
         self.dataStore.storageState
             .subscribe(onNext: { storageState in
+
                 switch storageState {
                 case .Unprepared, .Locked:
+                    self.sentryManager.addBreadcrumb(category: "Custom", message: "Storage State \(storageState), routing to welcome")
                     self.dispatcher.dispatch(action: LoginRouteAction.welcome)
                 case .Unlocked:
-                    if !view.mainStackExists || view.mainStackIs(LoginNavigationController.self) {
-                        self.dispatcher.dispatch(action: MainRouteAction.list)
-                    }
-//                    self.dispatcher.dispatch(action: MainRouteAction.list)
+                    self.sentryManager.addBreadcrumb(category: "Custom", message: "Storage State Unlocked, routing to list")
+//                    if !view.mainStackExists || view.mainStackIs(LoginNavigationController.self) {
+//                        self.dispatcher.dispatch(action: MainRouteAction.list)
+//                    }
+                    self.dispatcher.dispatch(action: MainRouteAction.list)
                     self.dispatcher.dispatch(action: CredentialProviderAction.refresh)
                 default:
                     break
@@ -163,6 +166,11 @@ class RootPresenter {
                         title: "Error",
                         returnRoute: MainRouteAction.list))
                 .drive(self.showExternalWebsite)
+                .disposed(by: self.disposeBag)
+
+        self.dispatcher.register
+                .filterByType(class: LoggingRouteAction.self)
+                .bind(to: self.loggingAction)
                 .disposed(by: self.disposeBag)
     }
 
@@ -285,6 +293,17 @@ class RootPresenter {
                                 returnRoute: externalSiteAction.returnRoute
                         )
                 )
+            }
+        }.asObserver()
+    }()
+
+    lazy private var loggingAction: AnyObserver<LoggingRouteAction> = { [unowned self] in
+        return Binder(self) { target, loggingAction in
+            switch loggingAction {
+            case .submitLog:
+                self.sentryManager.crash()
+            case .addBreadcrumb(let message):
+                self.sentryManager.addBreadcrumb(category: "Custom", message: message)
             }
         }.asObserver()
     }()
