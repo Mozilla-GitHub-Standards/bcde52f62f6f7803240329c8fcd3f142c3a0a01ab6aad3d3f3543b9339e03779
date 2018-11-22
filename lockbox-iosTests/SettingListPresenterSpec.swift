@@ -223,7 +223,7 @@ class SettingListPresenterSpec: QuickSpec {
             }
 
             describe("onSettingCellTapped") {
-                let routeActionStub = PublishSubject<RouteAction?>()
+                let routeActionStub = PublishSubject<Action?>()
                 describe("when the cell has a route action") {
                     let action = SettingRouteAction.account
 
@@ -243,7 +243,7 @@ class SettingListPresenterSpec: QuickSpec {
 
                 describe("when the cell did not have a route action") {
                     beforeEach {
-                        let settingRouteObservable: Observable<RouteAction?> = self.scheduler.createColdObservable([next(50, nil)]).asObservable()
+                        let settingRouteObservable: Observable<Action?> = self.scheduler.createColdObservable([next(50, nil)]).asObservable()
 
                         settingRouteObservable
                                 .bind(to: self.subject.onSettingCellTapped)

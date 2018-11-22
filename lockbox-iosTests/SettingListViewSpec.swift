@@ -16,14 +16,14 @@ class SettingListViewSpec: QuickSpec {
     class FakeSettingsPresenter: SettingListPresenter {
         var onViewReadyCalled = false
         var onDoneActionDispatched = false
-        var settingCellStub: TestableObserver<RouteAction?>!
+        var settingCellStub: TestableObserver<Action?>!
         var usageDataCellStub: TestableObserver<Bool>!
 
         override func onViewReady() {
             onViewReadyCalled = true
         }
 
-        override var onSettingCellTapped: AnyObserver<RouteAction?> {
+        override var onSettingCellTapped: AnyObserver<Action?> {
             return self.settingCellStub.asObserver()
         }
 
@@ -42,7 +42,7 @@ class SettingListViewSpec: QuickSpec {
             beforeEach {
                 self.subject = UIStoryboard(name: "SettingList", bundle: nil).instantiateViewController(withIdentifier: "settinglist") as? SettingListView
                 self.presenter = FakeSettingsPresenter(view: self.subject)
-                self.presenter.settingCellStub = self.scheduler.createObserver(RouteAction?.self)
+                self.presenter.settingCellStub = self.scheduler.createObserver(Action?.self)
                 self.presenter.usageDataCellStub = self.scheduler.createObserver(Bool.self)
                 self.subject.presenter = self.presenter
 
