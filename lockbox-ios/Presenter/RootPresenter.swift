@@ -107,11 +107,24 @@ class RootPresenter {
                     self.sentryManager.addBreadcrumb(category: "Custom", message: "Storage State \(storageState), routing to welcome")
                     self.dispatcher.dispatch(action: LoginRouteAction.welcome)
                 case .Unlocked:
-                    self.sentryManager.addBreadcrumb(category: "Custom", message: "Storage State Unlocked, routing to list")
+                    self.sentryManager.addBreadcrumb(category: "Custom", message: "Storage State Unlocked")
 //                    if !view.mainStackExists || view.mainStackIs(LoginNavigationController.self) {
 //                        self.dispatcher.dispatch(action: MainRouteAction.list)
 //                    }
-                    self.dispatcher.dispatch(action: MainRouteAction.list)
+
+                    if !view.mainStackExists {
+                        self.sentryManager.addBreadcrumb(category: "Custom", message: "Unlocked - !mainStackExists, routing to list")
+                        self.dispatcher.dispatch(action: MainRouteAction.list)
+                    } else if view.mainStackIs(SettingNavigationController.self) {
+                        self.sentryManager.addBreadcrumb(category: "Custom", message: "Unlocked - settingsnav noop")
+                    } else if view.topViewIs(ItemDetailView.self) {
+                        self.sentryManager.addBreadcrumb(category: "Custom", message: "Unlocked - detail screen noop")
+                        // noop
+                    } else {
+                        self.sentryManager.addBreadcrumb(category: "Custom", message: "Unlocked - route to list")
+                        self.dispatcher.dispatch(action: MainRouteAction.list)
+                    }
+                        //                    self.dispatcher.dispatch(action: MainRouteAction.list)
                     self.dispatcher.dispatch(action: CredentialProviderAction.refresh)
                 default:
                     break
