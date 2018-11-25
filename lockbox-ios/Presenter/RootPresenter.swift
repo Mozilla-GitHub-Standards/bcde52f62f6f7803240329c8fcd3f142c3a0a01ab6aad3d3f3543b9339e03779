@@ -232,21 +232,26 @@ class RootPresenter {
                 return
             }
 
+            self.sentryManager.addBreadcrumb(category: "Custom", message: "showList")
+
             if view.modalStackPresented {
                 view.dismissModals()
             }
 
             if !view.mainStackIs(MainNavigationController.self) {
+                self.sentryManager.addBreadcrumb(category: "Custom", message: "showList:startMainStack")
                 view.startMainStack(MainNavigationController.self)
             }
 
             switch mainAction {
             case .list:
                 if !view.topViewIs(ItemListView.self) {
+                    self.sentryManager.addBreadcrumb(category: "Custom", message: "showList:pushList")
                     view.pushMainView(view: .list)
                 }
             case .detail(let id):
                 if !view.topViewIs(ItemDetailView.self) {
+                    self.sentryManager.addBreadcrumb(category: "Custom", message: "showList:pushDetail")
                     view.pushMainView(view: .detail(itemId: id))
                 }
             }
