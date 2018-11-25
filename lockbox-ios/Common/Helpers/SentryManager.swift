@@ -28,6 +28,7 @@ class Sentry {
 
             // https://docs.sentry.io/clients/cocoa/advanced/#breadcrumbs
             Client.shared?.enableAutomaticBreadcrumbTracking()
+            Client.shared?.maxBreadcrumbs = 100
         } catch let error {
             print("\(error)")
         }

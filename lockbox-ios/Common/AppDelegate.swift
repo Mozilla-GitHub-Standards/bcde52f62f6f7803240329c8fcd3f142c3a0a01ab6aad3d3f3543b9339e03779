@@ -14,8 +14,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
+    var sentryManager: Sentry?
+
     func application(_ application: UIApplication, willFinishLaunchingWithOptions
                      launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
+        self.sentryManager = Sentry.shared
         _ = AccountStore.shared
         _ = DataStore.shared
         _ = AutoLockStore.shared
@@ -42,6 +45,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             UserDefaults.standard.set(false, forKey: PostFirstRunKey)
         }
 
+        self.sentryManager?.addBreadcrumb(category: "Custom", message: "app start")
+
         if !firstRun {
             self.checkForUpgrades()
         }
@@ -57,14 +62,17 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     func applicationDidEnterBackground(_ application: UIApplication) {
+        self.sentryManager?.addBreadcrumb(category: "Custom", message: "AppDelegate: Background")
         Dispatcher.shared.dispatch(action: LifecycleAction.background)
     }
 
     func applicationWillEnterForeground(_ application: UIApplication) {
+        self.sentryManager?.addBreadcrumb(category: "Custom", message: "AppDelegate: Forground")
         Dispatcher.shared.dispatch(action: LifecycleAction.foreground)
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
+        self.sentryManager?.addBreadcrumb(category: "Custom", message: "AppDelegate: Terminate")
         Dispatcher.shared.dispatch(action: LifecycleAction.shutdown)
     }
 
