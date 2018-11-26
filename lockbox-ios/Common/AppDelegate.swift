@@ -68,6 +68,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Dispatcher.shared.dispatch(action: LifecycleAction.shutdown)
     }
 
+    func application(_ application: UIApplication, shouldSaveApplicationState coder: NSCoder) -> Bool {
+        return true
+    }
+
+    func application(_ application: UIApplication, shouldRestoreApplicationState coder: NSCoder) -> Bool {
+        return true
+    }
+
     private func setupAdjust() {
         _ = AdjustManager.shared
     }
