@@ -76,6 +76,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         Dispatcher.shared.dispatch(action: LifecycleAction.shutdown)
     }
 
+    func applicationDidReceiveMemoryWarning(_ application: UIApplication) {
+        self.sentryManager?.addBreadcrumb(category: "Custom", message: "AppDelegate: MemoryWarning")
+    }
+
     private func setupAdjust() {
         _ = AdjustManager.shared
     }
