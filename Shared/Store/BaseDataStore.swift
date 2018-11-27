@@ -95,6 +95,7 @@ class BaseDataStore {
     internal let userDefaults: UserDefaults
     internal var profile: FxAUtils.Profile
     internal let dispatcher: Dispatcher
+    private let application: UIApplication
 
     public var list: Observable<[Login]> {
         return self.listSubject.asObservable()
@@ -116,11 +117,13 @@ class BaseDataStore {
          profileFactory: @escaping ProfileFactory = defaultProfileFactory,
          fxaLoginHelper: FxALoginHelper = FxALoginHelper.sharedInstance,
          keychainWrapper: KeychainWrapper = KeychainWrapper.standard,
-         userDefaults: UserDefaults = UserDefaults(suiteName: Constant.app.group) ?? .standard) {
+         userDefaults: UserDefaults = UserDefaults(suiteName: Constant.app.group) ?? .standard,
+         application: UIApplication = UIApplication.shared) {
         self.profileFactory = profileFactory
         self.fxaLoginHelper = fxaLoginHelper
         self.keychainWrapper = keychainWrapper
         self.userDefaults = userDefaults
+        self.application = application
 
         self.dispatcher = dispatcher
         self.profile = profileFactory(false)
@@ -158,6 +161,14 @@ class BaseDataStore {
                     case .background:
                         self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "BaseDataStore backgrounding app"))
                         self.profile.syncManager?.applicationDidEnterBackground()
+//                        self.profile.shutdown()
+
+                        var taskId = UIBackgroundTaskIdentifier.invalid
+                        taskId = application.beginBackgroundTask (expirationHandler: {
+                            NSLog("shutting down")
+                            self.profile.shutdown()
+                            application.endBackgroundTask(taskId)
+                        })
                     case .foreground:
                         self.dispatcher.dispatch(action: LoggingRouteAction.addBreadcrumb(message: "BaseDataStore forgrounding app"))
                         self.profile.syncManager?.applicationDidBecomeActive()
